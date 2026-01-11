@@ -153,13 +153,12 @@
     else fetch(GAS_WEBAPP_URL,{ method:'POST', body: payload, keepalive:true }).catch(()=>{});
   });
 
-  // 폼 제출 (CORS 프리플라이트 방지: headers 제거)
+  // 폼 제출
   const form = document.getElementById('leadForm');
   const submitBtn = document.querySelector('.ov-submit');
   let submitting = false;
 
   function validateForm(){
-    // 기본 required 체크
     if(!form.name.value.trim()) return {ok:false, msg:'이름을 입력해주세요.'};
     if(!form.phone.value.trim()) return {ok:false, msg:'연락처를 입력해주세요.'};
     if(!form.branch.value) return {ok:false, msg:'지점을 선택해주세요.'};
@@ -167,60 +166,61 @@
     return {ok:true};
   }
 
-form.addEventListener('submit', async (e)=>{
-  e.preventDefault();
-  if (submitting) return;
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    if (submitting) return;
 
-  const v = validateForm();
-  if(!v.ok){
-    showToast(v.msg);
-    return;
-  }
-
-  const payload = JSON.stringify({
-    type:'lead',
-    name: form.name.value.trim(),
-    phone: form.phone.value.trim(),
-    branch: form.branch.value,
-    date: form.date.value,
-    ts: Date.now()
-  });
-
-  try{
-    submitting = true;
-    submitBtn.disabled = true;
-    submitBtn.style.pointerEvents = 'none';
-
-    showToast('접수중입니다...');
-
-    const res = await fetch(GAS_WEBAPP_URL, { method:'POST', body: payload });
-
-    let text = '';
-    try { text = await res.text(); } catch(e) {}
-
-    let data = null;
-    try { data = text ? JSON.parse(text) : null; } catch(e) { data = null; }
-
-    if (data && data.success === false) {
-      throw new Error(data.message || 'server returned success:false');
+    const v = validateForm();
+    if(!v.ok){
+      showToast(v.msg);
+      return;
     }
 
-    showToast('예약 접수 완료!');
-    form.reset();
+    const payload = JSON.stringify({
+      type:'lead',
+      name: form.name.value.trim(),
+      phone: form.phone.value.trim(),
+      branch: form.branch.value,
+      date: form.date.value,
+      ts: Date.now()
+    });
 
-  }catch(err){
-    console.error(err);
-    showToast('전송 실패. 다시 시도해주세요.');
-  }finally{
-    submitting = false;
-    submitBtn.disabled = false;
-    submitBtn.style.pointerEvents = 'auto';
-  }
-});
+    try{
+      submitting = true;
+      submitBtn.disabled = true;
+      submitBtn.style.pointerEvents = 'none';
 
+      showToast('접수중입니다...');
+
+      const res = await fetch(GAS_WEBAPP_URL, { method:'POST', body: payload });
+
+      // ✅ res.ok로 성공/실패를 판단하지 말고, 서버 JSON의 success만 본다
+      let text = '';
+      try { text = await res.text(); } catch(e) {}
+
+      let data = null;
+      try { data = text ? JSON.parse(text) : null; } catch(e) { data = null; }
+
+      if (data && data.success === false) {
+        throw new Error(data.message || 'server returned success:false');
+      }
+
+      showToast('예약 접수 완료!');
+      form.reset();
+
+    }catch(err){
+      console.error(err);
+      showToast('전송 실패. 다시 시도해주세요.');
+    }finally{
+      submitting = false;
+      submitBtn.disabled = false;
+      submitBtn.style.pointerEvents = 'auto';
+    }
   });
 </script>
 
+
 </body>
 </html>
+
 
