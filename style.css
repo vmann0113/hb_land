@@ -1,161 +1,104 @@
-/* ===============================
-   RESET
-=============================== */
-html, body {
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
+html, body { margin:0; padding:0; overflow-x:hidden; }
+.landing { max-width:1080px; margin:0 auto; }
+.block img { width:100%; display:block; }
+
+/* 오버레이 섹션 공통 */
+.block-overlay { position:relative; }
+.overlay-layer { position:absolute; inset:0; }
+
+/* 오버레이 요소 공통 */
+.ov{
+  position:absolute;
+  background:transparent;
+  border:none;
+  outline:none;
+  box-sizing:border-box;
 }
+
+/* 폼 공통 스타일 */
+.ov-name,.ov-phone,.ov-branch,.ov-date{
+  padding:0 12px;
+  font-size:16px;
+}
+.ov::placeholder{ color:#b5b5b5; }
+
+.ov-branch{
+  appearance:none;
+  -webkit-appearance:none;
+  background:transparent;
+  color:#b5b5b5;
+}
+.ov-branch:valid{ color:#222; }
+
+.ov-date::-webkit-calendar-picker-indicator{ opacity:0; width:0; height:0; }
+.ov-date:invalid{ color:#b5b5b5; }
+.ov-date:valid{ color:#222; }
+
+.ov-submit{ cursor:pointer; }
 
 /* ===============================
-   LANDING COMMON
+   02_form (1080 x 538) - 좌표 %
+   일정선택 Y 오타 수정 반영 (330 기준)
 =============================== */
-.landing {
-  max-width: 1080px;
-  margin: 0 auto;
-}
-
-.block img {
-  width: 100%;
-  display: block;
-}
+.ov-name   { left:20.03%; top:45.72%; width:26.39%; height:10.41%; }
+.ov-phone  { left:59.17%; top:45.72%; width:26.39%; height:10.41%; }
+.ov-branch { left:20.03%; top:61.34%; width:26.39%; height:10.41%; }
+.ov-date   { left:59.17%; top:61.34%; width:26.39%; height:10.41%; }
+.ov-submit { left:36.85%; top:76.20%; width:26.39%; height:11.15%; }
 
 /* ===============================
-   CTA FIXED (공통)
+   05_store_intro (1080 x 1640) - 투명버튼
 =============================== */
-.fixed-cta {
-  position: fixed;
-  left: 50%;
-  bottom: 10px;
-  transform: translateX(-50%);
-  width: calc(100vw - 20px);
-  max-width: 1080px;
-  z-index: 9999;
-}
-
-.fixed-cta img {
-  width: 100%;
-  display: block;
-}
-
-/* 클릭 영역 */
-.fixed-cta-click {
-  position: absolute;
-  inset: 0;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-}
+.ov-store-cta { left:6.67%; top:31.65%; width:36.57%; height:4.21%; cursor:pointer; }
 
 /* ===============================
-   🚨 CTA 초기 상태: 전부 숨김
+   07_naver_links (1080 x 758) - 네이버 링크 버튼들
 =============================== */
-.cta-pc,
-.cta-mobile {
-  display: none !important;
+.ov-busan     { left:6.39%;  top:29.67%; width:27.04%; height:19.26%; }
+.ov-incheon   { left:36.48%; top:29.67%; width:27.04%; height:19.26%; }
+.ov-ansan     { left:66.57%; top:29.67%; width:27.04%; height:19.26%; }
+
+.ov-ulsan     { left:6.39%;  top:52.11%; width:27.04%; height:19.26%; }
+.ov-masan     { left:36.48%; top:52.11%; width:27.04%; height:19.26%; }
+.ov-jinju     { left:66.57%; top:52.11%; width:27.04%; height:19.26%; }
+
+.ov-changwon  { left:6.39%;  top:74.54%; width:27.04%; height:19.26%; }
+.ov-gimhae    { left:36.48%; top:74.54%; width:27.04%; height:19.26%; }
+.ov-yangsan   { left:66.57%; top:74.54%; width:27.04%; height:19.26%; }
+
+/* ✅ 하단 고정 CTA (picture 사용) */
+.fixed-cta{
+  position:fixed;
+  left:50%;
+  bottom:10px;
+  transform:translateX(-50%);
+  width:calc(100vw - 20px);
+  max-width:1080px;
+  z-index:9999;
+}
+.cta-picture, .cta-picture img { width:100%; display:block; }
+.fixed-cta-click{
+  position:absolute;
+  inset:0;
+  background:transparent;
+  border:none;
+  cursor:pointer;
 }
 
-/* ===============================
-   PC 전용 CTA
-=============================== */
-@media screen and (min-width: 601px) {
-  .cta-pc {
-    display: block !important;
-  }
+/* 토스트 */
+#toast{
+  position:fixed;
+  left:50%;
+  bottom:120px;
+  transform:translateX(-50%);
+  background:rgba(0,0,0,.82);
+  color:#fff;
+  padding:12px 16px;
+  border-radius:12px;
+  font-size:14px;
+  opacity:0;
+  transition:.2s;
+  z-index:10000;
+  pointer-events:none;
 }
-
-/* ===============================
-   모바일 전용 CTA
-=============================== */
-@media screen and (max-width: 600px) {
-  .cta-mobile {
-    display: block !important;
-    border-radius: 14px;
-  }
-}
-
-/* ===============================
-   OVERLAY COMMON
-=============================== */
-.block-overlay {
-  position: relative;
-}
-
-.overlay-layer {
-  position: absolute;
-  inset: 0;
-}
-
-/* 공통 오버레이 요소 */
-.ov {
-  position: absolute;
-  background: transparent;
-  border: none;
-  outline: none;
-  box-sizing: border-box;
-}
-
-/* 폼 */
-.ov-name,
-.ov-phone,
-.ov-branch,
-.ov-date {
-  padding: 0 12px;
-  font-size: 16px;
-}
-
-.ov::placeholder {
-  color: #b5b5b5;
-}
-
-.ov-branch {
-  appearance: none;
-  -webkit-appearance: none;
-  background: transparent;
-  color: #b5b5b5;
-}
-
-.ov-branch:valid {
-  color: #222;
-}
-
-.ov-date::-webkit-calendar-picker-indicator {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.ov-date:invalid {
-  color: #b5b5b5;
-}
-
-.ov-date:valid {
-  color: #222;
-}
-
-.ov-submit {
-  cursor: pointer;
-}
-
-/* ===============================
-   TOAST
-=============================== */
-#toast {
-  position: fixed;
-  left: 50%;
-  bottom: 120px;
-  transform: translateX(-50%);
-  background: rgba(0,0,0,.82);
-  color: #fff;
-  padding: 12px 16px;
-  border-radius: 12px;
-  font-size: 14px;
-  opacity: 0;
-  transition: .2s;
-  z-index: 10000;
-  pointer-events: none;
-}
-
-#toast.show {
-  opacity: 1;
-}
+#toast.show{ opacity:1; }
