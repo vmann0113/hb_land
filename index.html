@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>한빔한복 예약</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="page">
+  <img src="assets/hanbim_all_1080.png" alt="한빔한복 랜딩">
+
+  <!-- ✅ 폼 스크롤 앵커(CTA가 여기로 이동) -->
+  <div id="formAnchor" aria-hidden="true"></div>
+
+  <!-- ===============================
+       지점별 네이버 예약 (투명 클릭영역)
+       =============================== -->
+  <a class="branch-link br-busan"   data-branch="부산점" href="https://m.booking.naver.com/booking/6/bizes/661812"   target="_blank" rel="noopener noreferrer" aria-label="부산점 네이버 예약"></a>
+  <a class="branch-link br-incheon" data-branch="인천점" href="https://m.booking.naver.com/booking/13/bizes/1039475" target="_blank" rel="noopener noreferrer" aria-label="인천점 네이버 예약"></a>
+  <a class="branch-link br-ansan"   data-branch="안산점" href="https://m.booking.naver.com/booking/6/bizes/1500008"  target="_blank" rel="noopener noreferrer" aria-label="안산점 네이버 예약"></a>
+
+  <a class="branch-link br-ulsan"   data-branch="울산점" href="https://booking.naver.com/booking/6/bizes/1534767"    target="_blank" rel="noopener noreferrer" aria-label="울산점 네이버 예약"></a>
+  <a class="branch-link br-masan"   data-branch="마산점" href="https://booking.naver.com/booking/6/bizes/1526541"    target="_blank" rel="noopener noreferrer" aria-label="마산점 네이버 예약"></a>
+  <a class="branch-link br-jinju"   data-branch="진주점" href="https://m.booking.naver.com/booking/6/bizes/1485854"  target="_blank" rel="noopener noreferrer" aria-label="진주점 네이버 예약"></a>
+
+  <a class="branch-link br-changwon" data-branch="창원점" href="https://booking.naver.com/booking/6/bizes/843111"    target="_blank" rel="noopener noreferrer" aria-label="창원점 네이버 예약"></a>
+  <a class="branch-link br-gimhae"   data-branch="김해점" href="https://booking.naver.com/booking/6/bizes/1402679"   target="_blank" rel="noopener noreferrer" aria-label="김해점 네이버 예약"></a>
+  <a class="branch-link br-yangsan"  data-branch="양산점" href="https://booking.naver.com/booking/13/bizes/868629"   target="_blank" rel="noopener noreferrer" aria-label="양산점 네이버 예약"></a>
+
+  <!-- ===============================
+       상담 폼
+       =============================== -->
+  <form class="overlay-form" id="leadForm">
+    <input class="field f-name" name="name" placeholder="이름을 입력하세요" required autocomplete="name">
+
+    <input class="field f-phone" name="phone" placeholder="연락처를 입력하세요"
+           maxlength="13" inputmode="numeric" autocomplete="tel" required>
+
+    <select class="field f-branch" name="branch" required>
+      <option value="" disabled selected>지점을 선택하세요</option>
+      <option>김해점</option>
+      <option>마산점</option>
+      <option>부산점</option>
+      <option>안산점</option>
+      <option>양산점</option>
+      <option>인천점</option>
+      <option>진주점</option>
+      <option>창원점</option>
+    </select>
+
+    <input class="field f-date" name="date" type="date" required>
+
+    <button class="field f-submit" type="submit" aria-label="제출하기"></button>
+  </form>
+</div>
+
+<!-- ✅ 하단 고정 CTA -->
+<button id="ctaFixed" type="button" aria-label="상담 예약하기">상담 예약하기</button>
+
+<!-- 토스트 -->
+<div id="toast" aria-live="polite"></div>
+
+<script>
+  /* ===============================
+     설정
+  =============================== */
+  const GAS_WEBAPP_URL =
+    "https://script.google.com/macros/s/AKfycbzhLiZNO3t-XaZxCxsu0diISjKTUpi7PwNGjGyXgiC0n_Mrzsfv_PiVQJjxkbYBs3xF/exec";
+
+  /* ===============================
+     토스트
+  =============================== */
+  const toast = document.getElementById('toast');
+  let toastTimer = null;
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+  }
+
+  /* ===============================
+     연락처 자동 하이픈 (3-4-4) + 숫자만
+  =============================== */
+  const phone = document.querySelector('.f-phone');
+  phone.addEventListener('input', () => {
+    let n = phone.value.replace(/[^0-9]/g, '').slice(0, 11);
+    phone.value =
+      n.length < 4 ? n :
+      n.length < 8 ? n.slice(0, 3) + '-' + n.slice(3) :
+      n.slice(0, 3) + '-' + n.slice(3, 7) + '-' + n.slice(7, 11);
+  });
+
+  /* ===============================
+     날짜 선택: 클릭하면 달력 강제 오픈
+  =============================== */
+  const dateInput = document.querySelector('.f-date');
+  function openDatePicker() {
+    try {
+      if (typeof dateInput.showPicker === 'function') dateInput.showPicker();
+      else dateInput.focus();
+    } catch(e) { dateInput.focus(); }
+  }
+  dateInput.addEventListener('click', openDatePicker);
+  dateInput.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    openDatePicker();
+  }, { passive:false });
+
+  /* ===============================
+     하단 CTA → 폼으로 스크롤
+  =============================== */
+  document.getElementById('ctaFixed').addEventListener('click', () => {
+    const anchor = document.getElementById('formAnchor');
+    anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // 스크롤 후 커서 진입
+    setTimeout(() => document.querySelector('.f-name')?.focus(), 450);
+  });
+
+  /* ===============================
+     네이버 예약 링크 클릭 집계
+     - 새 탭 열기 직전 sendBeacon으로 클릭 기록
+  =============================== */
+  function trackBranchClick(branchName) {
+    const payload = JSON.stringify({
+      type: "click",
+      branch: branchName,
+      ts: Date.now()
+    });
+
+    // 가장 안전한 방식: sendBeacon
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon(GAS_WEBAPP_URL, payload);
+      return;
+    }
+
+    // fallback
+    fetch(GAS_WEBAPP_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: payload,
+      keepalive: true
+    }).catch(()=>{});
+  }
+
+  document.querySelectorAll('.branch-link').forEach(a => {
+    a.addEventListener('click', () => {
+      const branch = a.dataset.branch || '';
+      if (branch) trackBranchClick(branch);
+    });
+  });
+
+  /* ===============================
+     폼 제출 → 구글 시트 저장
+     - 중복 제출 방지/버튼 잠금/전송 UX 강화
+  =============================== */
+  const form = document.getElementById('leadForm');
+  const submitBtn = document.querySelector('.f-submit');
+  let submitting = false;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (submitting) return;
+
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const payload = {
+      type: "lead",
+      name: form.name.value.trim(),
+      phone: form.phone.value.trim(),
+      branch: form.branch.value,
+      date: form.date.value,
+      ts: Date.now()
+    };
+
+    if (payload.phone.replace(/[^0-9]/g, '').length < 10) {
+      showToast('연락처를 정확히 입력해주세요.');
+      form.phone.focus();
+      return;
+    }
+
+    try {
+      submitting = true;
+      submitBtn.disabled = true;
+      submitBtn.style.pointerEvents = 'none';
+      showToast('접수 중입니다...');
+
+      const res = await fetch(GAS_WEBAPP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) throw new Error('Network error');
+
+      showToast('예약 접수 완료! 곧 연락드릴게요.');
+      form.reset();
+
+    } catch (err) {
+      console.error(err);
+      showToast('전송 실패. 잠시 후 다시 시도해주세요.');
+    } finally {
+      submitting = false;
+      submitBtn.disabled = false;
+      submitBtn.style.pointerEvents = 'auto';
+    }
+  });
+</script>
+
+</body>
+</html>
