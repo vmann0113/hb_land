@@ -3,65 +3,90 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>한빔한복 예약</title>
-  <!-- ✅ 캐시 방지 -->
-  <link rel="stylesheet" href="style.css?v=20260112-3" />
+  <title>한빔한복 랜딩</title>
+  <!-- 캐시 방지: 수정할 때마다 v=숫자만 바꿔 -->
+  <link rel="stylesheet" href="style.css?v=20260112-20" />
 </head>
 <body>
 
-<div class="wrap">
-  <!-- ✅ 이미지가 기준. 모바일에서 width:100%로 딱 맞게 보임 -->
-  <div class="stage" id="stage">
-    <img id="landingImg" class="landing-img" src="assets/hanbim_all_1080.png?v=20260112-3" alt="한빔한복 랜딩">
+<main class="landing">
 
-    <!-- ✅ 오버레이는 1080 기준 좌표로 작성 + JS 스케일로 맞춤 -->
-    <div class="overlay" id="overlay">
+  <section class="block">
+    <img src="assets/01_hero.png" alt="히어로">
+  </section>
 
-      <!-- 폼 앵커(입력폼 살짝 위) -->
-      <div id="formAnchor" class="anchor" aria-hidden="true"></div>
+  <!-- 02 상담신청(입력폼) -->
+  <section class="block block-overlay" id="formSection">
+    <img src="assets/02_form.png" alt="상담신청">
 
-      <!-- 지점별 네이버 예약 링크 -->
-      <a class="branch-link br-busan"   data-branch="부산점" href="https://m.booking.naver.com/booking/6/bizes/661812"   target="_blank" rel="noopener noreferrer" aria-label="부산점 네이버 예약"></a>
-      <a class="branch-link br-incheon" data-branch="인천점" href="https://m.booking.naver.com/booking/13/bizes/1039475" target="_blank" rel="noopener noreferrer" aria-label="인천점 네이버 예약"></a>
-      <a class="branch-link br-ansan"   data-branch="안산점" href="https://m.booking.naver.com/booking/6/bizes/1500008"  target="_blank" rel="noopener noreferrer" aria-label="안산점 네이버 예약"></a>
+    <form class="overlay-layer" id="leadForm">
+      <input class="ov ov-name" name="name" placeholder="이름을 입력하세요" required autocomplete="name">
 
-      <a class="branch-link br-ulsan"   data-branch="울산점" href="https://booking.naver.com/booking/6/bizes/1534767"    target="_blank" rel="noopener noreferrer" aria-label="울산점 네이버 예약"></a>
-      <a class="branch-link br-masan"   data-branch="마산점" href="https://booking.naver.com/booking/6/bizes/1526541"    target="_blank" rel="noopener noreferrer" aria-label="마산점 네이버 예약"></a>
-      <a class="branch-link br-jinju"   data-branch="진주점" href="https://m.booking.naver.com/booking/6/bizes/1485854"  target="_blank" rel="noopener noreferrer" aria-label="진주점 네이버 예약"></a>
+      <input class="ov ov-phone" name="phone" placeholder="연락처를 입력하세요"
+             maxlength="13" inputmode="numeric" required autocomplete="tel">
 
-      <a class="branch-link br-changwon" data-branch="창원점" href="https://booking.naver.com/booking/6/bizes/843111"    target="_blank" rel="noopener noreferrer" aria-label="창원점 네이버 예약"></a>
-      <a class="branch-link br-gimhae"   data-branch="김해점" href="https://booking.naver.com/booking/6/bizes/1402679"   target="_blank" rel="noopener noreferrer" aria-label="김해점 네이버 예약"></a>
-      <a class="branch-link br-yangsan"  data-branch="양산점" href="https://booking.naver.com/booking/13/bizes/868629"   target="_blank" rel="noopener noreferrer" aria-label="양산점 네이버 예약"></a>
+      <select class="ov ov-branch" name="branch" required>
+        <option value="" disabled selected>지점을 선택하세요</option>
+        <option>김해점</option><option>마산점</option><option>부산점</option><option>안산점</option>
+        <option>양산점</option><option>인천점</option><option>진주점</option><option>창원점</option>
+      </select>
 
-      <!-- 상담 폼 -->
-      <form class="overlay-form" id="leadForm">
-        <input class="field f-name" name="name" placeholder="이름을 입력하세요" required autocomplete="name">
-        <input class="field f-phone" name="phone" placeholder="연락처를 입력하세요" maxlength="13" inputmode="numeric" required autocomplete="tel">
+      <input class="ov ov-date" name="date" type="date" required>
+      <button class="ov ov-submit" type="submit" aria-label="제출하기"></button>
+    </form>
+  </section>
 
-        <select class="field f-branch" name="branch" required>
-          <option value="" disabled selected>지점을 선택하세요</option>
-          <option>김해점</option>
-          <option>마산점</option>
-          <option>부산점</option>
-          <option>안산점</option>
-          <option>양산점</option>
-          <option>인천점</option>
-          <option>진주점</option>
-          <option>창원점</option>
-        </select>
+  <section class="block">
+    <img src="assets/03_reviews.png" alt="리뷰">
+  </section>
 
-        <input class="field f-date" name="date" type="date" required>
-        <button class="field f-submit" type="submit" aria-label="제출하기"></button>
-      </form>
+  <section class="block">
+    <img src="assets/04_stores.png" alt="전국지점">
+  </section>
 
+  <!-- 05 매장소개(투명버튼) -->
+  <section class="block block-overlay">
+    <img src="assets/05_store_intro.png" alt="매장소개">
+
+    <div class="overlay-layer">
+      <!-- 05 섹션 CTA 역할 버튼: 02 입력폼 섹션으로 이동 -->
+      <button class="ov ov-store-cta" type="button" aria-label="상담 신청으로 이동"></button>
     </div>
-  </div>
-</div>
+  </section>
 
-<!-- ✅ 하단 고정 CTA (PC/모바일 자동 스왑) -->
+  <section class="block">
+    <img src="assets/06_lookbook.png" alt="룩북">
+  </section>
+
+  <!-- 07 지점별 네이버링크(투명버튼) -->
+  <section class="block block-overlay">
+    <img src="assets/07_naver_links.png" alt="지점별 네이버 예약">
+
+    <div class="overlay-layer" id="naverLinks">
+      <a class="ov ov-naver-busan"   data-branch="부산점" href="https://m.booking.naver.com/booking/6/bizes/661812"   target="_blank" rel="noopener noreferrer" aria-label="부산점 네이버 예약"></a>
+      <a class="ov ov-naver-incheon" data-branch="인천점" href="https://m.booking.naver.com/booking/13/bizes/1039475" target="_blank" rel="noopener noreferrer" aria-label="인천점 네이버 예약"></a>
+      <a class="ov ov-naver-ansan"   data-branch="안산점" href="https://m.booking.naver.com/booking/6/bizes/1500008"  target="_blank" rel="noopener noreferrer" aria-label="안산점 네이버 예약"></a>
+
+      <a class="ov ov-naver-ulsan"   data-branch="울산점" href="https://booking.naver.com/booking/6/bizes/1534767"    target="_blank" rel="noopener noreferrer" aria-label="울산점 네이버 예약"></a>
+      <a class="ov ov-naver-masan"   data-branch="마산점" href="https://booking.naver.com/booking/6/bizes/1526541"    target="_blank" rel="noopener noreferrer" aria-label="마산점 네이버 예약"></a>
+      <a class="ov ov-naver-jinju"   data-branch="진주점" href="https://m.booking.naver.com/booking/6/bizes/1485854"  target="_blank" rel="noopener noreferrer" aria-label="진주점 네이버 예약"></a>
+
+      <a class="ov ov-naver-changwon" data-branch="창원점" href="https://booking.naver.com/booking/6/bizes/843111"    target="_blank" rel="noopener noreferrer" aria-label="창원점 네이버 예약"></a>
+      <a class="ov ov-naver-gimhae"   data-branch="김해점" href="https://booking.naver.com/booking/6/bizes/1402679"   target="_blank" rel="noopener noreferrer" aria-label="김해점 네이버 예약"></a>
+      <a class="ov ov-naver-yangsan"  data-branch="양산점" href="https://booking.naver.com/booking/13/bizes/868629"   target="_blank" rel="noopener noreferrer" aria-label="양산점 네이버 예약"></a>
+    </div>
+  </section>
+
+  <section class="block">
+    <img src="assets/08_footer.png" alt="푸터">
+  </section>
+
+</main>
+
+<!-- 하단 고정 CTA (PC/모바일 자동 스왑) -->
 <div class="fixed-cta">
-  <img src="assets/cta_1080.png?v=20260112-3" class="cta-pc" alt="상담 예약하기">
-  <img src="assets/cta_mobile_750.png?v=20260112-3" class="cta-mobile" alt="상담 예약하기">
+  <img src="assets/cta_1080.png" class="cta-pc" alt="상담 예약하기">
+  <img src="assets/cta_mobile_750.png" class="cta-mobile" alt="상담 예약하기">
   <button class="fixed-cta-click" type="button" aria-label="상담 예약하기"></button>
 </div>
 
@@ -71,24 +96,6 @@
   const GAS_WEBAPP_URL =
     "https://script.google.com/macros/s/AKfycbzhLiZNO3t-XaZxCxsu0diISjKTUpi7PwNGjGyXgiC0n_Mrzsfv_PiVQJjxkbYBs3xF/exec";
 
-  const img = document.getElementById('landingImg');
-  const overlay = document.getElementById('overlay');
-
-  // ✅ 오버레이 스케일을 “실제 이미지 표시폭 / 1080”으로 계산해서 적용
-  function applyScale(){
-    const w = img.getBoundingClientRect().width;
-    const s = w / 1080;
-    overlay.style.transform = `scale(${s})`;
-  }
-
-  // 이미지 로드 후 + 리사이즈 때마다 갱신
-  img.addEventListener('load', applyScale);
-  window.addEventListener('resize', applyScale);
-  // 혹시 캐시로 load가 늦으면 대비
-  setTimeout(applyScale, 50);
-  setTimeout(applyScale, 300);
-
-  // 토스트
   const toast = document.getElementById('toast');
   let toastTimer = null;
   function showToast(msg){
@@ -98,14 +105,18 @@
     toastTimer = setTimeout(()=>toast.classList.remove('show'),2200);
   }
 
-  // CTA 클릭 → 폼으로 이동(앵커)
-  document.querySelector('.fixed-cta-click').addEventListener('click', () => {
-    document.getElementById('formAnchor').scrollIntoView({ behavior:'smooth', block:'start' });
-    setTimeout(() => document.querySelector('.f-name')?.focus(), 450);
-  });
+  function goToForm(){
+    document.getElementById('formSection').scrollIntoView({behavior:'smooth', block:'start'});
+    setTimeout(()=>document.querySelector('.ov-name')?.focus(), 450);
+  }
+
+  // 하단 CTA → 폼
+  document.querySelector('.fixed-cta-click').addEventListener('click', goToForm);
+  // 05 매장소개 섹션 내부 CTA 역할 버튼 → 폼
+  document.querySelector('.ov-store-cta').addEventListener('click', goToForm);
 
   // 연락처 자동 하이픈
-  const phone = document.querySelector('.f-phone');
+  const phone = document.querySelector('.ov-phone');
   phone.addEventListener('input', ()=>{
     let n = phone.value.replace(/[^0-9]/g,'').slice(0,11);
     phone.value =
@@ -114,8 +125,8 @@
       n.slice(0,3)+'-'+n.slice(3,7)+'-'+n.slice(7);
   });
 
-  // ✅ 달력 강제 오픈(showPicker)
-  const dateInput = document.querySelector('.f-date');
+  // 달력 강제 오픈(showPicker)
+  const dateInput = document.querySelector('.ov-date');
   function openDatePicker(){
     try{
       if (typeof dateInput.showPicker === 'function') dateInput.showPicker();
@@ -126,20 +137,20 @@
   dateInput.addEventListener('touchstart', (e)=>{
     e.preventDefault();
     openDatePicker();
-  }, { passive:false });
+  }, {passive:false});
 
   // 네이버 예약 클릭 집계
-  document.querySelectorAll('.branch-link').forEach(a=>{
-    a.addEventListener('click', ()=>{
-      const payload = JSON.stringify({ type:'click', branch:a.dataset.branch, ts:Date.now() });
-      if (navigator.sendBeacon) navigator.sendBeacon(GAS_WEBAPP_URL, payload);
-      else fetch(GAS_WEBAPP_URL,{ method:'POST', body: payload, keepalive:true }).catch(()=>{});
-    });
+  document.addEventListener('click', (e)=>{
+    const a = e.target.closest('a[data-branch]');
+    if(!a) return;
+    const payload = JSON.stringify({ type:'click', branch:a.dataset.branch, ts:Date.now() });
+    if (navigator.sendBeacon) navigator.sendBeacon(GAS_WEBAPP_URL, payload);
+    else fetch(GAS_WEBAPP_URL,{ method:'POST', body: payload, keepalive:true }).catch(()=>{});
   });
 
-  // 폼 제출 (headers 제거로 CORS 프리플라이트 방지)
+  // 폼 제출 (CORS 프리플라이트 방지: headers 제거)
   const form = document.getElementById('leadForm');
-  const submitBtn = document.querySelector('.f-submit');
+  const submitBtn = document.querySelector('.ov-submit');
   let submitting = false;
 
   form.addEventListener('submit', async (e)=>{
