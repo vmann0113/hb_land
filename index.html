@@ -34,33 +34,38 @@
     </form>
   </section>
 
-  <!-- 03 리뷰 -->
-  <section class="block">
-    <img src="assets/03_reviews.png" alt="리뷰">
+  <!-- 03 매장소개 (높이 변경/축소) -->
+  <section class="block short">
+    <img src="assets/03_store_intro.png" alt="매장소개">
   </section>
 
-  <!-- 04 전국지점 -->
-  <section class="block">
-    <img src="assets/04_stores.png" alt="전국지점">
-  </section>
-
-  <!-- 05 매장소개(투명버튼) -->
+  <!-- 04 차별성 (신규 / 투명버튼 포함) -->
   <section class="block block-overlay">
-    <img src="assets/05_store_intro.png" alt="매장소개">
+    <img src="assets/04_differentiation.png" alt="차별성">
     <div class="overlay-layer">
-      <!-- 05 섹션 내 CTA 성격 투명버튼: 폼 섹션으로 이동 -->
+      <!-- 04 섹션 내 CTA 성격 투명버튼: 폼 섹션으로 이동 -->
       <button class="ov ov-store-cta" type="button" aria-label="상담신청으로 이동"></button>
     </div>
   </section>
 
-  <!-- 06 룩북 -->
+  <!-- 05 리뷰 -->
   <section class="block">
-    <img src="assets/06_lookbook.png" alt="룩북">
+    <img src="assets/05_reviews.png" alt="리뷰">
   </section>
 
-  <!-- 07 지점별 네이버링크(투명버튼) -->
+  <!-- 06 전국지점 -->
+  <section class="block">
+    <img src="assets/06_stores.png" alt="전국지점">
+  </section>
+
+  <!-- 07 룩북 -->
+  <section class="block">
+    <img src="assets/07_lookbook.png" alt="룩북">
+  </section>
+
+  <!-- 08 지점별 네이버링크(투명버튼) -->
   <section class="block block-overlay">
-    <img src="assets/07_naver_links.png" alt="지점별 네이버 예약">
+    <img src="assets/08_naver_links.png" alt="지점별 네이버 예약">
     <div class="overlay-layer" id="naverLinks">
       <a class="ov ov-busan"   data-branch="부산점" href="https://m.booking.naver.com/booking/6/bizes/661812"   target="_blank" rel="noopener noreferrer" aria-label="부산점 네이버 예약"></a>
       <a class="ov ov-incheon" data-branch="인천점" href="https://m.booking.naver.com/booking/13/bizes/1039475" target="_blank" rel="noopener noreferrer" aria-label="인천점 네이버 예약"></a>
@@ -76,9 +81,9 @@
     </div>
   </section>
 
-  <!-- 08 푸터 -->
+  <!-- 09 푸터 -->
   <section class="block">
-    <img src="assets/08_footer.png" alt="푸터">
+    <img src="assets/09_footer.png" alt="푸터">
   </section>
 
 </main>
@@ -95,9 +100,8 @@
 <div id="toast" aria-live="polite"></div>
 
 <script>
-  const GAS_WEBAPP_URL =
-    "https://script.google.com/macros/s/AKfycbyiPaERPD1ZUBNO7T40wR5Tcy0jU0qtw5SRwBylCHAvRSjafqHOLGkAWGhxKyUgCerM/exec
-";
+  // ✅ 줄바꿈/공백으로 URL 깨지는 문제 방지: trim() 강제
+  const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyiPaERPD1ZUBNO7T40wR5Tcy0jU0qtw5SRwBylCHAvRSjafqHOLGkAWGhxKyUgCerM/exec".trim();
 
   // 토스트
   const toast = document.getElementById('toast');
@@ -115,15 +119,15 @@
     setTimeout(()=>document.querySelector('.ov-name')?.focus(), 450);
   }
 
-  // CTA 클릭 → 폼 섹션
-  document.querySelector('.fixed-cta-click').addEventListener('click', goToForm);
+  // 하단 CTA 클릭 → 폼 섹션
+  document.querySelector('.fixed-cta-click')?.addEventListener('click', goToForm);
 
-  // 05 섹션 투명버튼 → 폼 섹션
-  document.querySelector('.ov-store-cta').addEventListener('click', goToForm);
+  // 04 섹션 투명버튼 → 폼 섹션
+  document.querySelector('.ov-store-cta')?.addEventListener('click', goToForm);
 
   // 연락처 자동 하이픈
   const phone = document.querySelector('.ov-phone');
-  phone.addEventListener('input', ()=>{
+  phone?.addEventListener('input', ()=>{
     let n = phone.value.replace(/[^0-9]/g,'').slice(0,11);
     phone.value =
       n.length < 4 ? n :
@@ -135,12 +139,14 @@
   const dateInput = document.querySelector('.ov-date');
   function openDatePicker(){
     try{
-      if (typeof dateInput.showPicker === 'function') dateInput.showPicker();
-      else { dateInput.focus(); dateInput.click(); }
-    }catch(e){ dateInput.focus(); }
+      if (dateInput && typeof dateInput.showPicker === 'function') dateInput.showPicker();
+      else if (dateInput) { dateInput.focus(); dateInput.click(); }
+    }catch(e){
+      try { dateInput?.focus(); } catch(_) {}
+    }
   }
-  dateInput.addEventListener('click', openDatePicker);
-  dateInput.addEventListener('touchstart', (e)=>{
+  dateInput?.addEventListener('click', openDatePicker);
+  dateInput?.addEventListener('touchstart', (e)=>{
     e.preventDefault();
     openDatePicker();
   }, {passive:false});
@@ -167,7 +173,7 @@
     return {ok:true};
   }
 
-  form.addEventListener('submit', async (e)=>{
+  form?.addEventListener('submit', async (e)=>{
     e.preventDefault();
     if (submitting) return;
 
@@ -188,62 +194,56 @@
 
     try{
       submitting = true;
-      submitBtn.disabled = true;
-      submitBtn.style.pointerEvents = 'none';
+      if (submitBtn){
+        submitBtn.disabled = true;
+        submitBtn.style.pointerEvents = 'none';
+      }
 
       showToast('접수중입니다...');
 
-let res;
-try {
-  res = await fetch(GAS_WEBAPP_URL, { method:'POST', body: payload });
-} catch (e) {
-  // ✅ 네 케이스: 저장은 됐는데 브라우저가 CORS/opaque로 fetch를 reject하는 경우가 있음
-  // → 실패로 보지 말고 성공 처리(이미 시트에 기록되는 게 확인된 상황)
-  showToast('예약 접수 완료!');
-  form.reset();
-  return;
-}
+      let res;
+      try {
+        res = await fetch(GAS_WEBAPP_URL, { method:'POST', body: payload });
+      } catch (e) {
+        // ✅ 저장은 됐는데 브라우저가 CORS/opaque로 fetch를 reject하는 경우가 있음
+        showToast('예약 접수 완료!');
+        form.reset();
+        return;
+      }
 
-// 응답을 읽을 수 있으면 JSON 성공/실패를 반영
-try {
-  const text = await res.text();
-  let data = null;
-  try { data = text ? JSON.parse(text) : null; } catch(e) { data = null; }
+      // 응답을 읽을 수 있으면 JSON 성공/실패를 반영
+      try {
+        const text = await res.text();
+        let data = null;
+        try { data = text ? JSON.parse(text) : null; } catch(e) { data = null; }
 
-  if (data && data.success === false) {
-    throw new Error(data.message || 'server returned success:false');
-  }
+        if (data && data.success === false) {
+          throw new Error(data.message || 'server returned success:false');
+        }
 
-  // success:true거나, JSON이 아니어도(OK 텍스트 등) 성공 처리
-  showToast('예약 접수 완료!');
-  form.reset();
-  return;
+        showToast('예약 접수 완료!');
+        form.reset();
+        return;
 
-} catch (e) {
-  // ✅ 응답 읽기 실패(opaque 등)도 성공 처리
-  showToast('예약 접수 완료!');
-  form.reset();
-  return;
-}
-
+      } catch (e) {
+        // ✅ 응답 읽기 실패(opaque 등)도 성공 처리
+        showToast('예약 접수 완료!');
+        form.reset();
+        return;
+      }
 
     }catch(err){
       console.error(err);
       showToast('전송 실패. 다시 시도해주세요.');
     }finally{
       submitting = false;
-      submitBtn.disabled = false;
-      submitBtn.style.pointerEvents = 'auto';
+      if (submitBtn){
+        submitBtn.disabled = false;
+        submitBtn.style.pointerEvents = 'auto';
+      }
     }
   });
 </script>
 
-
 </body>
 </html>
-
-
-
-
-
-
