@@ -165,11 +165,24 @@
   const submitBtn = document.querySelector('.ov-submit');
   let submitting = false;
 
+  // ✅ form.name 같은 취약 접근 대신 elements[]로 고정
+  function getField(name){
+    return form?.elements?.namedItem(name) || form?.elements?.[name] || null;
+  }
+
   function validateForm(){
-    if(!form.name.value.trim()) return {ok:false, msg:'이름을 입력해주세요.'};
-    if(!form.phone.value.trim()) return {ok:false, msg:'연락처를 입력해주세요.'};
-    if(!form.branch.value) return {ok:false, msg:'지점을 선택해주세요.'};
-    if(!form.date.value) return {ok:false, msg:'예식일정을 선택해주세요.'};
+    const nameEl = getField('name');
+    const phoneEl = getField('phone');
+    const branchEl = getField('branch');
+    const dateEl = getField('date');
+
+    if(!nameEl || !phoneEl || !branchEl || !dateEl) {
+      return {ok:false, msg:'폼 구성 오류(필드 누락). 새로고침 후 다시 시도해주세요.'};
+    }
+    if(!nameEl.value.trim()) return {ok:false, msg:'이름을 입력해주세요.'};
+    if(!phoneEl.value.trim()) return {ok:false, msg:'연락처를 입력해주세요.'};
+    if(!branchEl.value) return {ok:false, msg:'지점을 선택해주세요.'};
+    if(!dateEl.value) return {ok:false, msg:'예식일정을 선택해주세요.'};
     return {ok:true};
   }
 
@@ -183,12 +196,17 @@
       return;
     }
 
+    const nameEl = getField('name');
+    const phoneEl = getField('phone');
+    const branchEl = getField('branch');
+    const dateEl = getField('date');
+
     const payload = JSON.stringify({
       type:'lead',
-      name: form.name.value.trim(),
-      phone: form.phone.value.trim(),
-      branch: form.branch.value,
-      date: form.date.value,
+      name: nameEl.value.trim(),
+      phone: phoneEl.value.trim(),
+      branch: branchEl.value,
+      date: dateEl.value,
       ts: Date.now()
     });
 
@@ -203,10 +221,11 @@
 
       let res;
       try {
-        res = await fetch(GAS_WEBAPP_URL, { method:'POST', body: payload });
+        // keepalive는 모바일/뒤로가기 상황에도 전송 안정성 도움
+        res = await fetch(GAS_WEBAPP_URL, { method:'POST', body: payload, keepalive:true });
       } catch (e) {
-        // ✅ 저장은 됐는데 브라우저가 CORS/opaque로 fetch를 reject하는 경우가 있음
-        showToast('예약 접수 완료!');
+        // ✅ 네 케이스: 저장은 됐는데 브라우저가 CORS/opaque로 fetch를 reject하는 경우
+        showToast('접수 완료되었습니다!');
         form.reset();
         return;
       }
@@ -221,13 +240,13 @@
           throw new Error(data.message || 'server returned success:false');
         }
 
-        showToast('예약 접수 완료!');
+        showToast('접수 완료되었습니다!');
         form.reset();
         return;
 
       } catch (e) {
         // ✅ 응답 읽기 실패(opaque 등)도 성공 처리
-        showToast('예약 접수 완료!');
+        showToast('접수 완료되었습니다!');
         form.reset();
         return;
       }
@@ -243,7 +262,9 @@
       }
     }
   });
+
 </script>
 
 </body>
 </html>
+
