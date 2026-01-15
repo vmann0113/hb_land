@@ -2,6 +2,18 @@ html, body { margin:0; padding:0; overflow-x:hidden; }
 .landing { max-width:1080px; margin:0 auto; }
 .block img { width:100%; display:block; }
 
+/* ✅ 03 매장소개 높이 변경 (section class="block short") */
+.block.short{
+  height:985.1337px;
+  overflow:hidden;
+}
+.block.short img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
 /* 오버레이 섹션 공통 */
 .block-overlay { position:relative; }
 .overlay-layer { position:absolute; inset:0; }
@@ -47,12 +59,13 @@ html, body { margin:0; padding:0; overflow-x:hidden; }
 .ov-submit { left:36.85%; top:76.20%; width:26.39%; height:11.15%; }
 
 /* ===============================
-   05_store_intro (1080 x 1640) - 투명버튼
+   04_differentiation (차별성) - 투명버튼
+   (X:71.5, Y:519.2, W:395, H:69) / 기준가로 1080 → %
 =============================== */
-.ov-store-cta { left:6.67%; top:31.65%; width:36.57%; height:4.21%; cursor:pointer; }
+.ov-store-cta { left:6.62%; top:48.07%; width:36.57%; height:6.39%; cursor:pointer; }
 
 /* ===============================
-   07_naver_links (1080 x 758) - 네이버 링크 버튼들
+   08_naver_links (1080 x 758) - 네이버 링크 버튼들
 =============================== */
 .ov-busan     { left:6.39%;  top:29.67%; width:27.04%; height:19.26%; }
 .ov-incheon   { left:36.48%; top:29.67%; width:27.04%; height:19.26%; }
@@ -102,3 +115,10 @@ html, body { margin:0; padding:0; overflow-x:hidden; }
   pointer-events:none;
 }
 #toast.show{ opacity:1; }
+
+/* (권장) 모바일에서 터치 영역 확보 + 매장소개는 자동 높이로 자연스럽게 */
+@media (max-width: 600px){
+  .ov-store-cta{ min-height:44px; }
+  .block.short{ height:auto; }
+  .block.short img{ height:auto; object-fit:contain; }
+}
