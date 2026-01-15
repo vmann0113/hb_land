@@ -185,17 +185,17 @@ function validateForm(){
   return {ok:true};
 }
 
-async function postLead(payload){
-  // ✅ “보내기만 하면” 성공으로 간주 (이미 시트에 잘 기록되는 게 확인된 상황)
-  // 응답 파싱/권한/HTML 반환 같은 변수로 UX가 흔들리지 않게 설계
-  await fetch(GAS_WEBAPP_URL, {
-    method: 'POST',
-    body: payload,
-    keepalive: true
-  });
+function sendLead(payload){
+  // ✅ 1) 가능하면 sendBeacon (응답 기다릴 필요 없음 / 모바일에서도 안정)
+  if (navigator.sendBeacon) {
+    const blob = new Blob([payload], { type: 'application/json' });
+    const ok = navigator.sendBeacon(GAS_WEBAPP_URL, blob);
+    return ok;
+  }
+  return false;
 }
 
-form?.addEventListener('submit', async (e)=>{
+form?.addEventListener('submit', (e)=>{
   e.preventDefault();
   if (submitting) return;
 
@@ -219,31 +219,30 @@ form?.addEventListener('submit', async (e)=>{
     ts: Date.now()
   });
 
-  try{
-    submitting = true;
-    if (submitBtn){
-      submitBtn.disabled = true;
-      submitBtn.style.pointerEvents = 'none';
-    }
+  submitting = true;
+  if (submitBtn){
+    submitBtn.disabled = true;
+    submitBtn.style.pointerEvents = 'none';
+  }
 
-    showToast('접수중입니다...');
+  showToast('접수중입니다...');
 
-    // ✅ 네트워크 예외가 아니면 무조건 성공 토스트
-    await postLead(payload);
+  // ✅ 응답을 기다리지 않고 “즉시 성공 처리”
+  const beaconOk = sendLead(payload);
 
-    showToast('접수 완료되었습니다!');
-    alert('접수 완료되었습니다!')
-    form.reset();
+  // sendBeacon이 실패했을 때만 fetch fallback (그래도 응답은 안 기다림)
+  if (!beaconOk) {
+    fetch(GAS_WEBAPP_URL, { method:'POST', body: payload, keepalive:true }).catch(()=>{});
+  }
 
-  }catch(err){
-    console.error(err);
-    showToast('전송 실패. 다시 시도해주세요.');
-  }finally{
-    submitting = false;
-    if (submitBtn){
-      submitBtn.disabled = false;
-      submitBtn.style.pointerEvents = 'auto';
-    }
+  // ✅ 여기서 바로 완료 토스트/리셋
+  showToast('접수 완료되었습니다!');
+  form.reset();
+
+  submitting = false;
+  if (submitBtn){
+    submitBtn.disabled = false;
+    submitBtn.style.pointerEvents = 'auto';
   }
 });
 
@@ -252,6 +251,7 @@ form?.addEventListener('submit', async (e)=>{
 
 </body>
 </html>
+
 
 
 
