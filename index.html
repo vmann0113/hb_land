@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>한빔한복 랜딩</title>
-  <!-- 캐시 방지: 숫자만 바꿔도 즉시 반영 -->
   <link rel="stylesheet" href="style.css?v=20260112-200" />
 </head>
 <body>
@@ -25,9 +24,9 @@
 
       <select class="ov ov-branch" name="branch" required>
         <option value="" disabled selected>지점을 선택하세요</option>
-        <option>부산점</option><option>울산점</option><option>김해점</option><option>양산점</option>
-        <option>창원점</option><option>마산점</option><option>진주점</option><option>인천점</option>
-        <option>안산점</option><option>센텀점</option>
+        <option>부산점</option><option>센텀점</option><option>울산점</option><option>김해점</option>
+        <option>양산점</option><option>창원점</option><option>마산점</option><option>진주점</option>
+        <option>인천점</option><option>안산점</option><option>대구점</option><option>포항점</option>
       </select>
 
       <input class="ov ov-date" name="date" type="date" required>
@@ -44,7 +43,6 @@
   <section class="block block-overlay">
     <img src="assets/04_differentiation.png" alt="차별성">
     <div class="overlay-layer">
-      <!-- 04 섹션 내 CTA 성격 투명버튼: 폼 섹션으로 이동 -->
       <button class="ov ov-store-cta" type="button" aria-label="상담신청으로 이동"></button>
     </div>
   </section>
@@ -54,9 +52,10 @@
     <img src="assets/05_reviews.png" alt="리뷰">
   </section>
 
-  <!-- 06 전국지점 -->
-  <section class="block">
+  <!-- 06 전국지점 (오버레이) -->
+  <section class="block block-overlay stores-map">
     <img src="assets/06_stores.png" alt="전국지점">
+    <div class="overlay-layer" id="storesOverlay"></div>
   </section>
 
   <!-- 07 룩북 -->
@@ -64,22 +63,10 @@
     <img src="assets/07_lookbook.png" alt="룩북">
   </section>
 
-  <!-- 08 지점별 네이버링크(투명버튼) -->
-  <section class="block block-overlay">
+  <!-- 08 지점별 네이버링크 (오버레이) -->
+  <section class="block block-overlay naver-grid">
     <img src="assets/08_naver_links.png" alt="지점별 네이버 예약">
-    <div class="overlay-layer" id="naverLinks">
-      <a class="ov ov-busan"   data-branch="부산점" href="https://m.booking.naver.com/booking/6/bizes/661812"   target="_blank" rel="noopener noreferrer" aria-label="부산점 네이버 예약"></a>
-      <a class="ov ov-incheon" data-branch="인천점" href="https://m.booking.naver.com/booking/13/bizes/1039475" target="_blank" rel="noopener noreferrer" aria-label="인천점 네이버 예약"></a>
-      <a class="ov ov-ansan"   data-branch="안산점" href="https://m.booking.naver.com/booking/6/bizes/1500008"  target="_blank" rel="noopener noreferrer" aria-label="안산점 네이버 예약"></a>
-
-      <a class="ov ov-ulsan"   data-branch="울산점" href="https://booking.naver.com/booking/6/bizes/1534767"    target="_blank" rel="noopener noreferrer" aria-label="울산점 네이버 예약"></a>
-      <a class="ov ov-masan"   data-branch="마산점" href="https://booking.naver.com/booking/6/bizes/1526541"    target="_blank" rel="noopener noreferrer" aria-label="마산점 네이버 예약"></a>
-      <a class="ov ov-jinju"   data-branch="진주점" href="https://m.booking.naver.com/booking/6/bizes/1485854"  target="_blank" rel="noopener noreferrer" aria-label="진주점 네이버 예약"></a>
-
-      <a class="ov ov-changwon" data-branch="창원점" href="https://booking.naver.com/booking/6/bizes/843111"    target="_blank" rel="noopener noreferrer" aria-label="창원점 네이버 예약"></a>
-      <a class="ov ov-gimhae"   data-branch="김해점" href="https://booking.naver.com/booking/6/bizes/1402679"   target="_blank" rel="noopener noreferrer" aria-label="김해점 네이버 예약"></a>
-      <a class="ov ov-yangsan"  data-branch="양산점" href="https://booking.naver.com/booking/13/bizes/868629"   target="_blank" rel="noopener noreferrer" aria-label="양산점 네이버 예약"></a>
-    </div>
+    <div class="overlay-layer" id="naverOverlay"></div>
   </section>
 
   <!-- 09 푸터 -->
@@ -89,7 +76,7 @@
 
 </main>
 
-<!-- ✅ 하단 고정 CTA: picture로 “둘 중 하나만” 렌더 → 모바일 2개 노출 원천 차단 -->
+<!-- ✅ 하단 고정 CTA (이 블록이 있어야 함) -->
 <div class="fixed-cta">
   <picture class="cta-picture">
     <source media="(max-width: 600px)" srcset="assets/cta_mobile_750.png">
@@ -101,7 +88,6 @@
 <div id="toast" aria-live="polite"></div>
 
 <script>
-  // ✅ 줄바꿈/공백으로 URL 깨지는 문제 방지: trim() 강제
   const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyiPaERPD1ZUBNO7T40wR5Tcy0jU0qtw5SRwBylCHAvRSjafqHOLGkAWGhxKyUgCerM/exec".trim();
 
   // 토스트
@@ -114,16 +100,16 @@
     toastTimer = setTimeout(()=>toast.classList.remove('show'),2200);
   }
 
-  // 공통: 폼 섹션으로 이동
+  // 폼 섹션으로 이동
   function goToForm(){
     document.getElementById('formSection').scrollIntoView({behavior:'smooth', block:'start'});
     setTimeout(()=>document.querySelector('.ov-name')?.focus(), 450);
   }
 
-  // 하단 CTA 클릭 → 폼 섹션
+  // ✅ 하단 CTA 클릭 → 폼 이동 (이게 "하단 CTA 스크립트")
   document.querySelector('.fixed-cta-click')?.addEventListener('click', goToForm);
 
-  // 04 섹션 투명버튼 → 폼 섹션
+  // 차별성 CTA → 폼 이동
   document.querySelector('.ov-store-cta')?.addEventListener('click', goToForm);
 
   // 연락처 자동 하이픈
@@ -152,122 +138,238 @@
     openDatePicker();
   }, {passive:false});
 
-  // 네이버 링크 클릭 집계 (data-branch 달린 링크면 자동)
+  // ✅ 통합 클릭 집계: 전국지점/네이버링크 어디든 a[data-branch]면 집계
+  function sendClick(branchName){
+    const payload = JSON.stringify({ type:'click', branch: branchName, ts: Date.now() });
+    if (navigator.sendBeacon) navigator.sendBeacon(GAS_WEBAPP_URL, payload);
+    else fetch(GAS_WEBAPP_URL, { method:'POST', body: payload, keepalive:true }).catch(()=>{});
+  }
   document.addEventListener('click', (e)=>{
     const a = e.target.closest('a[data-branch]');
     if(!a) return;
-    const payload = JSON.stringify({ type:'click', branch:a.dataset.branch, ts:Date.now() });
-    if (navigator.sendBeacon) navigator.sendBeacon(GAS_WEBAPP_URL, payload);
-    else fetch(GAS_WEBAPP_URL,{ method:'POST', body: payload, keepalive:true }).catch(()=>{});
+    const branchName = (a.dataset.branch || "").trim();
+    if(!branchName) return;
+    sendClick(branchName);
   });
 
-// 폼 제출
-const form = document.getElementById('leadForm');
-const submitBtn = document.querySelector('.ov-submit');
-let submitting = false;
+  // 지점 12개
+  const BRANCHES = [
+    { key:"busan",   name:"부산점",  status:"open",   url:"https://m.booking.naver.com/booking/6/bizes/661812" },
+    { key:"centum",  name:"센텀점",  status:"open",   url:"https://booking.naver.com/booking/6/bizes/1577219" },
+    { key:"ulsan",   name:"울산점",  status:"open",   url:"https://booking.naver.com/booking/6/bizes/1534767" },
+    { key:"gimhae",  name:"김해점",  status:"open",   url:"https://booking.naver.com/booking/6/bizes/1402679" },
+    { key:"yangsan", name:"양산점",  status:"open",   url:"https://booking.naver.com/booking/13/bizes/868629" },
+    { key:"changwon",name:"창원점",  status:"open",   url:"https://booking.naver.com/booking/6/bizes/843111" },
+    { key:"masan",   name:"마산점",  status:"open",   url:"https://booking.naver.com/booking/6/bizes/1526541" },
+    { key:"jinju",   name:"진주점",  status:"open",   url:"https://m.booking.naver.com/booking/6/bizes/1485854" },
+    { key:"incheon", name:"인천점",  status:"open",   url:"https://m.booking.naver.com/booking/13/bizes/1039475" },
+    { key:"ansan",   name:"안산점",  status:"open",   url:"https://m.booking.naver.com/booking/6/bizes/1500008" },
+    { key:"daegu",   name:"대구점",  status:"coming", url:"" },
+    { key:"pohang",  name:"포항점",  status:"coming", url:"" },
+  ];
 
-function getField(name){
-  return form?.elements?.namedItem(name) || form?.elements?.[name] || null;
-}
+  const STORES_BASE_W = 1080;
+  const STORES_RECTS = {
+    busan:   { x:567, y:255, w:131, h:131 },
+    centum:  { x:712, y:255, w:131, h:131 },
+    ulsan:   { x:858, y:255, w:131, h:131 },
+    gimhae:  { x:567, y:407, w:131, h:131 },
+    yangsan: { x:712, y:407, w:131, h:131 },
+    changwon:{ x:858, y:407, w:131, h:131 },
+    masan:   { x:567, y:559, w:131, h:131 },
+    jinju:   { x:712, y:559, w:131, h:131 },
+    incheon: { x:858, y:559, w:131, h:131 },
+    ansan:   { x:567, y:709, w:131, h:131 },
+    daegu:   { x:712, y:709, w:131, h:131 },
+    pohang:  { x:858, y:709, w:131, h:131 },
+  };
 
-function validateForm(){
-  const nameEl = getField('name');
-  const phoneEl = getField('phone');
-  const branchEl = getField('branch');
-  const dateEl = getField('date');
+  const NAVER_BASE_W = 1080;
+  const NAVER_BASE_H = 937.2;
+  const NAVER_RECTS = {
+    busan:   { x: 69, y:225, w:292, h:146 },
+    centum:  { x:394, y:225, w:292, h:146 },
+    ulsan:   { x:719, y:225, w:292, h:146 },
+    gimhae:  { x: 69, y:395, w:292, h:146 },
+    yangsan: { x:394, y:395, w:292, h:146 },
+    changwon:{ x:719, y:395, w:292, h:146 },
+    masan:   { x: 69, y:565, w:292, h:146 },
+    jinju:   { x:394, y:565, w:292, h:146 },
+    incheon: { x:719, y:565, w:292, h:146 },
+    ansan:   { x: 69, y:734, w:292, h:146 },
+    daegu:   { x:394, y:734, w:292, h:146 },
+    pohang:  { x:719, y:734, w:292, h:146 },
+  };
 
-  if(!nameEl || !phoneEl || !branchEl || !dateEl) {
-    return {ok:false, msg:'폼 구성 오류(필드 누락). 새로고침 후 다시 시도해주세요.'};
+  function makeLink(branch, rect){
+    const a = document.createElement('a');
+    a.className = "ov";
+    a.href = branch.url;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    a.setAttribute("data-branch", branch.name);
+    a.setAttribute("aria-label", `${branch.name} 네이버 예약`);
+    a.dataset.x = rect.x; a.dataset.y = rect.y; a.dataset.w = rect.w; a.dataset.h = rect.h;
+    return a;
   }
-  if(!nameEl.value.trim()) return {ok:false, msg:'이름을 입력해주세요.'};
-  if(!phoneEl.value.trim()) return {ok:false, msg:'연락처를 입력해주세요.'};
-  if(!branchEl.value) return {ok:false, msg:'지점을 선택해주세요.'};
-  if(!dateEl.value) return {ok:false, msg:'예식일정을 선택해주세요.'};
-  return {ok:true};
-}
 
-// ✅ fetch는 "보내기만" 보장하고, 응답은 기다리지 않게 설계
-function fireAndForgetPost(url, payload){
-  // keepalive는 모바일/페이지 이동 상황에서도 전송 안정성 도움
-  // mode는 기본값으로 두되, CORS 때문에 reject 나는 경우를 대비해 catch로 흡수
-  return fetch(url, {
-    method: 'POST',
-    body: payload,
-    keepalive: true
+  function makeComing(branch, rect){
+    const btn = document.createElement('button');
+    btn.type = "button";
+    btn.className = "ov";
+    btn.setAttribute("aria-label", `${branch.name} 오픈 준비중`);
+    btn.dataset.x = rect.x; btn.dataset.y = rect.y; btn.dataset.w = rect.w; btn.dataset.h = rect.h;
+    btn.addEventListener('click', ()=> showToast('오픈 준비중입니다.'));
+    return btn;
+  }
+
+  function applyRectsForSection(sectionSelector, baseW, baseH){
+    const sec = document.querySelector(sectionSelector);
+    if(!sec) return;
+
+    const img = sec.querySelector('img');
+    const overlay = sec.querySelector('.overlay-layer');
+    if(!img || !overlay) return;
+
+    const run = ()=>{
+      const cw = img.clientWidth || 0;
+      const ch = img.clientHeight || 0;
+      if(!cw || !ch) return;
+
+      const hBase = (baseH != null) ? baseH : (img.naturalHeight || ch);
+      const sx = cw / baseW;
+      const sy = ch / hBase;
+
+      overlay.querySelectorAll('.ov').forEach(el=>{
+        const x = Number(el.dataset.x || 0);
+        const y = Number(el.dataset.y || 0);
+        const w = Number(el.dataset.w || 0);
+        const h = Number(el.dataset.h || 0);
+        el.style.left   = (x * sx) + "px";
+        el.style.top    = (y * sy) + "px";
+        el.style.width  = (w * sx) + "px";
+        el.style.height = (h * sy) + "px";
+        el.style.background = "transparent";
+        el.style.border = "none";
+        el.style.cursor = "pointer";
+      });
+    };
+
+    if (img.complete) run();
+    else img.addEventListener('load', run, { once:true });
+  }
+
+  function buildOverlays(){
+    const storesWrap = document.getElementById('storesOverlay');
+    const naverWrap  = document.getElementById('naverOverlay');
+    if(storesWrap) storesWrap.innerHTML = "";
+    if(naverWrap)  naverWrap.innerHTML  = "";
+
+    BRANCHES.forEach(b=>{
+      if(storesWrap){
+        const r = STORES_RECTS[b.key];
+        if(r) storesWrap.appendChild(b.status === "open" ? makeLink(b, r) : makeComing(b, r));
+      }
+      if(naverWrap){
+        const r = NAVER_RECTS[b.key];
+        if(r) naverWrap.appendChild(b.status === "open" ? makeLink(b, r) : makeComing(b, r));
+      }
+    });
+
+    applyRectsForSection('.stores-map', STORES_BASE_W, null);
+    applyRectsForSection('.naver-grid',  NAVER_BASE_W, NAVER_BASE_H);
+  }
+
+  window.addEventListener('resize', ()=>{
+    applyRectsForSection('.stores-map', STORES_BASE_W, null);
+    applyRectsForSection('.naver-grid',  NAVER_BASE_W, NAVER_BASE_H);
   });
-}
 
-form?.addEventListener('submit', (e)=>{
-  e.preventDefault();
-  if (submitting) return;
+  // 폼 제출(안정형)
+  const form = document.getElementById('leadForm');
+  const submitBtn = document.querySelector('.ov-submit');
+  let submitting = false;
 
-  const v = validateForm();
-  if(!v.ok){
-    showToast(v.msg);
-    return;
+  function getField(name){
+    return form?.elements?.namedItem(name) || form?.elements?.[name] || null;
   }
 
-  const nameEl = getField('name');
-  const phoneEl = getField('phone');
-  const branchEl = getField('branch');
-  const dateEl = getField('date');
+  function validateForm(){
+    const nameEl = getField('name');
+    const phoneEl = getField('phone');
+    const branchEl = getField('branch');
+    const dateEl = getField('date');
 
-  const payload = JSON.stringify({
-    type:'lead',
-    name: nameEl.value.trim(),
-    phone: phoneEl.value.trim(),
-    branch: branchEl.value,
-    date: dateEl.value,
-    ts: Date.now()
-  });
-
-  submitting = true;
-  if (submitBtn){
-    submitBtn.disabled = true;
-    submitBtn.style.pointerEvents = 'none';
-  }
-
-  showToast('접수중입니다...');
-
-  // ✅ 1) 먼저 "전송 시도"를 확실히 한다 (저장 목적)
-  const p = fireAndForgetPost(GAS_WEBAPP_URL, payload);
-
-  // ✅ 2) 응답을 기다리면 너 케이스에서 멈추는 일이 있으니,
-  //    UX는 타이머로 "완료" 처리 (전송만 되면 시트에 들어옴)
-  const doneTimer = setTimeout(()=>{
-    showToast('접수 완료되었습니다!');
-    form.reset();
-
-    submitting = false;
-    if (submitBtn){
-      submitBtn.disabled = false;
-      submitBtn.style.pointerEvents = 'auto';
+    if(!nameEl || !phoneEl || !branchEl || !dateEl) {
+      return {ok:false, msg:'폼 구성 오류(필드 누락). 새로고침 후 다시 시도해주세요.'};
     }
-  }, 700);
+    if(!nameEl.value.trim()) return {ok:false, msg:'이름을 입력해주세요.'};
+    if(!phoneEl.value.trim()) return {ok:false, msg:'연락처를 입력해주세요.'};
+    if(!branchEl.value) return {ok:false, msg:'지점을 선택해주세요.'};
+    if(!dateEl.value) return {ok:false, msg:'예식일정을 선택해주세요.'};
+    return {ok:true};
+  }
 
-  // ✅ 3) 다만 "POST 자체가 실패"한 경우만 실패 처리
-  //    (네트워크가 끊겼거나 URL이 틀린 경우)
-  p.catch((err)=>{
-    clearTimeout(doneTimer);
-    console.error(err);
-    showToast('전송 실패. 네트워크를 확인하고 다시 시도해주세요.');
+  function fireAndForgetPost(url, payload){
+    return fetch(url, { method:'POST', body: payload, keepalive:true });
+  }
 
-    submitting = false;
-    if (submitBtn){
-      submitBtn.disabled = false;
-      submitBtn.style.pointerEvents = 'auto';
+  form?.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    if (submitting) return;
+
+    const v = validateForm();
+    if(!v.ok){
+      showToast(v.msg);
+      return;
     }
+
+    const payload = JSON.stringify({
+      type:'lead',
+      name: getField('name').value.trim(),
+      phone: getField('phone').value.trim(),
+      branch: getField('branch').value,
+      date: getField('date').value,
+      ts: Date.now()
+    });
+
+    submitting = true;
+    if (submitBtn){
+      submitBtn.disabled = true;
+      submitBtn.style.pointerEvents = 'none';
+    }
+
+    showToast('접수중입니다...');
+
+    const p = fireAndForgetPost(GAS_WEBAPP_URL, payload);
+
+    const doneTimer = setTimeout(()=>{
+      showToast('접수 완료되었습니다!');
+      form.reset();
+
+      submitting = false;
+      if (submitBtn){
+        submitBtn.disabled = false;
+        submitBtn.style.pointerEvents = 'auto';
+      }
+    }, 700);
+
+    p.catch((err)=>{
+      clearTimeout(doneTimer);
+      console.error(err);
+      showToast('전송 실패. 네트워크를 확인하고 다시 시도해주세요.');
+
+      submitting = false;
+      if (submitBtn){
+        submitBtn.disabled = false;
+        submitBtn.style.pointerEvents = 'auto';
+      }
+    });
   });
-});
 
-
+  // start
+  buildOverlays();
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
