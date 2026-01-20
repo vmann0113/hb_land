@@ -1,5 +1,13 @@
 html, body { margin:0; padding:0; overflow-x:hidden; }
-.landing { max-width:1080px; margin:0 auto; }
+
+/* ✅ KB FIX: 하단 fixed CTA가 콘텐츠를 덮지 않도록 여유 확보 */
+:root{ --ctaH: 0px; }
+.landing {
+  max-width:1080px;
+  margin:0 auto;
+  padding-bottom: calc(var(--ctaH) + 24px + env(safe-area-inset-bottom));
+}
+
 .block img { width:100%; display:block; }
 
 /* ✅ 03 매장소개 높이 변경 (section class="block short") */
@@ -32,6 +40,9 @@ html, body { margin:0; padding:0; overflow-x:hidden; }
   outline:none;
   box-sizing:border-box;
 }
+
+/* ✅ KB FIX: 포커스 시 스크롤 여유(브라우저 자동 스크롤 안정화) */
+input, textarea, select { scroll-margin-bottom: 240px; }
 
 /* 폼 공통 스타일 */
 .ov-name,.ov-phone,.ov-branch,.ov-date{
@@ -135,4 +146,3 @@ html, body { margin:0; padding:0; overflow-x:hidden; }
   .block.short{ height:auto; }
   .block.short img{ height:auto; object-fit:contain; }
 }
-
