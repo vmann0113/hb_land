@@ -100,13 +100,100 @@
     toastTimer = setTimeout(()=>toast.classList.remove('show'),2200);
   }
 
+  // ✅ KB FIX: fixed CTA 높이를 CSS 변수로 반영(스크롤/포커스 보정에 사용)
+  function setCtaHeightVar(){
+    const cta = document.querySelector('.fixed-cta');
+    const h = cta ? Math.round(cta.getBoundingClientRect().height) : 0;
+    document.documentElement.style.setProperty('--ctaH', h + 'px');
+  }
+  window.addEventListener('resize', setCtaHeightVar);
+  setCtaHeightVar();
+
+  // ✅ KB FIX: 포커스 요소가 키보드/CTA에 가리면 자동으로 올려주는 유틸
+  (function KeyboardSafeFocus(){
+    const FORM_SECTION_SEL = '#formSection';
+
+    function isEditable(el){
+      if(!el) return false;
+      const t = (el.tagName || '').toLowerCase();
+      return t === 'input' || t === 'textarea' || t === 'select' || el.isContentEditable;
+    }
+
+    function getBottomOverlay(){
+      // fixed CTA가 화면을 덮고 있으므로, 이 높이만큼 안전 여유로 빼준다
+      const cta = document.querySelector('.fixed-cta');
+      const ctaH = cta ? cta.getBoundingClientRect().height : 0;
+      // 토스트는 pointer-events none이라 실제 가림 영향은 적지만, 약간의 여유는 둠
+      return Math.max(16, Math.round(ctaH) + 16);
+    }
+
+    function ensureVisible(el){
+      if(!isEditable(el)) return;
+
+      // 폼 섹션 안에서만 동작(성공본 보호)
+      if(!el.closest(FORM_SECTION_SEL)) return;
+
+      const vv = window.visualViewport;
+      const vh = vv ? vv.height : window.innerHeight;
+
+      const r = el.getBoundingClientRect();
+      const bottomSafe = vh - getBottomOverlay();
+      const topSafe = 12; // 위쪽은 조금만 여유
+
+      // 아래로 가리면 위로 올림
+      if (r.bottom > bottomSafe) {
+        const dy = (r.bottom - bottomSafe) + 12;
+        window.scrollBy({ top: dy, left: 0, behavior: 'smooth' });
+        return;
+      }
+      // 위로 너무 붙으면 살짝 내림
+      if (r.top < topSafe) {
+        const dy = (topSafe - r.top) + 12;
+        window.scrollBy({ top: -dy, left: 0, behavior: 'smooth' });
+        return;
+      }
+    }
+
+    function ensureVisibleTwice(el){
+      // 키보드 애니메이션 타이밍 때문에 여러 번 체크하는 게 핵심
+      requestAnimationFrame(()=>ensureVisible(el));
+      setTimeout(()=>ensureVisible(el), 80);
+      setTimeout(()=>ensureVisible(el), 250);
+    }
+
+    document.addEventListener('focusin', (e) => {
+      ensureVisibleTwice(e.target);
+    });
+
+    // 키보드 올라오며 viewport가 줄어드는 타이밍 대응
+    if (window.visualViewport) {
+      let t = null;
+      window.visualViewport.addEventListener('resize', () => {
+        clearTimeout(t);
+        t = setTimeout(() => ensureVisibleTwice(document.activeElement), 50);
+      });
+    }
+
+    // 외부에서 호출할 수 있게 노출(CTA 이동 후 focus 직후 보정용)
+    window.__ensureFormFieldVisible = ensureVisibleTwice;
+  })();
+
   // 폼 섹션으로 이동
   function goToForm(){
-    document.getElementById('formSection').scrollIntoView({behavior:'smooth', block:'start'});
-    setTimeout(()=>document.querySelector('.ov-name')?.focus(), 450);
+    const sec = document.getElementById('formSection');
+    sec.scrollIntoView({behavior:'smooth', block:'start'});
+
+    // 기존 성공본 흐름 유지 + 포커스 후 보정만 추가
+    setTimeout(()=>{
+      const first = document.querySelector('.ov-name');
+      first?.focus();
+
+      // ✅ KB FIX: 포커스 직후(키보드 뜨는 타이밍) 한번 더 보정
+      if (first && window.__ensureFormFieldVisible) window.__ensureFormFieldVisible(first);
+    }, 450);
   }
 
-  // ✅ 하단 CTA 클릭 → 폼 이동 (이게 "하단 CTA 스크립트")
+  // ✅ 하단 CTA 클릭 → 폼 이동
   document.querySelector('.fixed-cta-click')?.addEventListener('click', goToForm);
 
   // 차별성 CTA → 폼 이동
